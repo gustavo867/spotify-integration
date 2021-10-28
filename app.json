@@ -3,6 +3,7 @@
     "name": "test-mobile-seven-app",
     "slug": "test-mobile-seven-app",
     "version": "1.0.0",
+    "scheme": "test-mobile-seven-app",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -13,13 +14,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.test.seven",
+      "supportsTablet": false
     },
     "android": {
+      "package": "com.test.seven",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
