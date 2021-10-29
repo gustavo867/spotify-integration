@@ -4,6 +4,9 @@ import { CLIENT_ID, CLIENT_SECRET } from "../../config";
 
 import * as AuthSessions from "expo-auth-session";
 import axios from "axios";
+import { SpotifyDTOS } from "../@types/spotify";
+import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type AuthResponse = {
   authentication?: any;
@@ -15,17 +18,22 @@ type AuthResponse = {
   url: string;
 };
 
-type AuthContextProps = {
-  handleLoginWithSpotify(): Promise<void>;
-  loading: boolean;
-};
+type AuthContextProps = ReturnType<typeof useAuthProviderValues>;
 
 export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
 
-export const AuthProvider: React.FC = ({ children }) => {
+function useAuthProviderValues() {
   const [loading, setLoading] = React.useState(false);
+  const [tokens, setTokens] = React.useState({
+    refreshToken: "",
+    accessToken: "",
+    expiresIn: "",
+  });
+  const [userData, setUserData] = React.useState<SpotifyDTOS | undefined>(
+    undefined
+  );
 
   async function handleLoginWithSpotify() {
     setLoading(true);
@@ -58,27 +66,110 @@ export const AuthProvider: React.FC = ({ children }) => {
         );
 
         const {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            expires_in: expiresIn,
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          expires_in: expiresIn,
         } = response.data;
 
-        console.log("Oi", response.data);
+        const res = await axios.get<SpotifyDTOS>(
+          "https://api.spotify.com/v1/me",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        setTokens({
+          accessToken,
+          refreshToken,
+          expiresIn,
+        });
+
+        setUserData(res.data);
+        await AsyncStorage.setItem("@user", JSON.stringify(res.data));
+        await AsyncStorage.setItem(
+          "@tokens",
+          JSON.stringify({
+            accessToken,
+            refreshToken,
+            expiresIn,
+          })
+        );
+
+        setLoading(false);
+
+        return;
       }
 
-      console.log("a", authResponse);
-    } catch (error) {
-      console.log("error", error);
+      setLoading(false);
+
+      Alert.alert("Erro ao fazer login com spotify");
+    } catch (error: any) {
+      console.log("error", error.request);
 
       setLoading(false);
     }
   }
 
-  return (
-    <AuthContext.Provider value={{ handleLoginWithSpotify, loading }}>
-      {children}
-    </AuthContext.Provider>
+  async function handleLogOutUser() {
+    setUserData(undefined);
+    setTokens({
+      refreshToken: "",
+      accessToken: "",
+      expiresIn: "",
+    });
+    await AsyncStorage.removeItem("@user");
+    await AsyncStorage.removeItem("@tokens");
+  }
+
+  React.useEffect(() => {
+    async function getUserFromStorage() {
+      const user = await AsyncStorage.getItem("@user");
+      const token = await AsyncStorage.getItem("@tokens");
+      const userParsed = JSON.parse(user as string);
+      const tokenParsed = JSON.parse(token as string);
+
+      if (userParsed) {
+        setUserData(userParsed);
+        setTokens((s) => ({
+          ...s,
+          accessToken: tokenParsed?.access_token ?? s.accessToken,
+          refreshToken: tokenParsed?.refreshToken ?? s.accessToken,
+          expiresIn: tokenParsed?.expiresIn ?? s.accessToken,
+        }));
+      }
+    }
+
+    getUserFromStorage();
+  }, []);
+
+  return React.useMemo(
+    () => ({
+      loading,
+      setLoading,
+      userData,
+      setUserData,
+      handleLoginWithSpotify,
+      tokens,
+      handleLogOutUser,
+    }),
+    [
+      loading,
+      setLoading,
+      userData,
+      setUserData,
+      handleLoginWithSpotify,
+      tokens,
+      handleLogOutUser,
+    ]
   );
+}
+
+export const AuthProvider: React.FC = ({ children }) => {
+  const values = useAuthProviderValues();
+
+  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };
 
 export function useAuth() {

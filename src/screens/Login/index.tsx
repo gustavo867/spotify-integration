@@ -19,7 +19,7 @@ const discovery = {
 
 const Login: React.FC = () => {
   const safeAreaInsents = useSafeAreaInsets();
-  const { handleLoginWithSpotify } = useAuth();
+  const context = useAuth();
 
   return (
     <S.Container>
@@ -32,7 +32,8 @@ const Login: React.FC = () => {
       >
         <Button
           buttonColor="#1bd760"
-          onPress={() => handleLoginWithSpotify()}
+          isLoading={context.loading}
+          onPress={() => context.handleLoginWithSpotify()}
           text="Login com o spotify"
         />
       </S.SubmitButtonContainer>
