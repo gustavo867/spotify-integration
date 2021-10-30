@@ -70,18 +70,17 @@ function useAuthProviderValues() {
     const tokenParsed = JSON.parse(token as string);
 
     if (userParsed) {
+      setTokens({
+        accessToken: tokenParsed?.accessToken,
+        refreshToken: tokenParsed?.refreshToken,
+        expiresIn: tokenParsed?.expiresIn,
+      });
+
       setUserData(userParsed);
 
       if (tokenParsed?.expiresIn === 0) {
         await refreshToken();
       }
-
-      setTokens((s) => ({
-        ...s,
-        accessToken: tokenParsed?.accessToken ?? s.accessToken,
-        refreshToken: tokenParsed?.refreshToken ?? s.accessToken,
-        expiresIn: tokenParsed?.expiresIn ?? s.accessToken,
-      }));
     }
   }
 
