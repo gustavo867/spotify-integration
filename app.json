@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "test-mobile-seven-app",
-    "slug": "test-mobile-seven-app",
+    "name": "spotify-integration",
+    "slug": "spotify-integration",
     "version": "1.0.0",
-    "scheme": "test-mobile-seven-app",
+    "scheme": "spotify-integration",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -14,15 +14,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "bundleIdentifier": "com.test.seven",
+      "bundleIdentifier": "com.spotify.integration",
       "supportsTablet": false
     },
     "android": {
-      "package": "com.test.seven",
+      "package": "com.spotify.integration",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -31,6 +29,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Teste"
+    "description": "Teste com spotify"
   }
 }

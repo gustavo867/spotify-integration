@@ -34,7 +34,10 @@ function useAudioValuesProvider() {
     playbackInstance: null,
     volume: 1.0,
     isBuffering: true,
+    currentPlaying: "",
   });
+
+  let timeTimeout: NodeJS.Timer;
 
   const [currentMusicPlaying, setCurrentMusicPlaying] = React.useState<
     Item | undefined
@@ -54,58 +57,62 @@ function useAudioValuesProvider() {
 
   async function getStatus() {
     const status: any = await soundObject.getStatusAsync();
-    const percentage =
-      (status["positionMillis"] / status["durationMillis"]) * 1000;
-    const remainingTime = status["durationMillis"] - status["positionMillis"];
-    const remainminute = remainingTime / 1000 / 60;
-    const remainsecond = (remainingTime / 1000) % 60;
-    const positionminute = status["positionMillis"] / 1000 / 60;
-    const positionsecond = (status["positionMillis"] / 1000) % 60;
-    const durationminute = status["durationMillis"] / 1000 / 60;
-    const durationsecond = (status["durationMillis"] / 1000) % 60;
+    if (status.isLoaded) {
+      const percentage =
+        (status["positionMillis"] / status["durationMillis"]) * 1000;
+      const remainingTime = status["durationMillis"] - status["positionMillis"];
+      const remainminute = remainingTime / 1000 / 60;
+      const remainsecond = (remainingTime / 1000) % 60;
+      const positionminute = status["positionMillis"] / 1000 / 60;
+      const positionsecond = (status["positionMillis"] / 1000) % 60;
+      const durationminute = status["durationMillis"] / 1000 / 60;
+      const durationsecond = (status["durationMillis"] / 1000) % 60;
 
-    const remain =
-      remainminute.toString().split(".")[0] +
-      ":" +
-      remainsecond.toString().split(".")[0];
-    const position =
-      positionminute.toString().split(".")[0] +
-      ":" +
-      positionsecond.toString().split(".")[0];
-    const duration =
-      durationminute.toString().split(".")[0] +
-      ":" +
-      durationsecond.toString().split(".")[0];
+      const remain =
+        remainminute.toString().split(".")[0] +
+        ":" +
+        remainsecond.toString().split(".")[0];
+      const position =
+        positionminute.toString().split(".")[0] +
+        ":" +
+        positionsecond.toString().split(".")[0];
+      const duration =
+        durationminute.toString().split(".")[0] +
+        ":" +
+        durationsecond.toString().split(".")[0];
 
-    if (remainingTime === 0) {
-      setTimeout(() => {
-        setShowMiniPlayer(false);
-        setCurrentMusicPlaying(undefined);
-      }, 1000);
+      if (remainingTime <= 39) {
+        setTimeout(() => {
+          unloadMusic();
+        }, 200);
+      }
+
+      setTime({
+        position: percentage,
+        timeLeft: remainingTime,
+        remainTime: remain,
+        positionTime: position,
+        durationTime: duration,
+      });
+    } else {
+      clearTimeout(timeTimeout);
     }
-
-    setTime({
-      position: percentage,
-      timeLeft: remainingTime,
-      remainTime: remain,
-      positionTime: position,
-      durationTime: duration,
-    });
   }
 
   const loadMusicPreview = React.useCallback(
-    async (uri: string) => {
+    async (uri: string, id: string) => {
       await soundObject.loadAsync({
         uri: uri,
       });
 
-      const interval = setInterval(() => getStatus(), 1000);
+      timeTimeout = setInterval(() => getStatus(), 1000);
 
       setAudio({
         isPlaying: true,
         playbackInstance: "something" as unknown as null,
         volume: audio.volume,
         isBuffering: audio.isBuffering,
+        currentPlaying: id,
       });
 
       await soundObject.playAsync();
@@ -131,7 +138,10 @@ function useAudioValuesProvider() {
       playbackInstance: null,
       volume: 1.0,
       isBuffering: true,
+      currentPlaying: "",
     });
+
+    clearTimeout(timeTimeout);
 
     setShowMiniPlayer(false);
     setCurrentMusicPlaying(undefined);
@@ -142,12 +152,13 @@ function useAudioValuesProvider() {
 
     isPlaying ? await unloadMusic() : await soundObject.playAsync();
 
-    setAudio({
+    setAudio((s) => ({
+      ...s,
       isPlaying: !isPlaying,
       playbackInstance: audio.playbackInstance,
       volume: audio.volume,
       isBuffering: audio.isBuffering,
-    });
+    }));
 
     setCurrentMusicPlaying(undefined);
   }, [audio, soundObject]);
@@ -162,6 +173,7 @@ function useAudioValuesProvider() {
       unloadMusic,
       currentMusicPlaying,
       setCurrentMusicPlaying,
+      setShowMiniPlayer,
     }),
     [
       showMiniPlayer,

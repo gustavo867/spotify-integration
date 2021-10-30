@@ -29,7 +29,7 @@ export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
 
-const redirect_uri = "https://auth.expo.io/@gustavo867/test-mobile-seven-app";
+const redirect_uri = "https://auth.expo.io/@gustavo867/spotify-integration";
 
 function useAuthProviderValues() {
   const [loading, setLoading] = React.useState(false);
@@ -157,7 +157,9 @@ function useAuthProviderValues() {
 
       Alert.alert("Erro ao fazer login com spotify");
     } catch (error: any) {
-      console.log("error", error.request);
+      // console.log("error", error.request);
+
+      Alert.alert("Erro ao fazer login com spotify");
 
       setLoading(false);
     }
@@ -183,6 +185,7 @@ function useAuthProviderValues() {
       handleLoginWithSpotify,
       tokens,
       handleLogOutUser,
+      refreshToken,
     }),
     [
       loading,
@@ -192,6 +195,7 @@ function useAuthProviderValues() {
       handleLoginWithSpotify,
       tokens,
       handleLogOutUser,
+      refreshToken,
     ]
   );
 }

@@ -77,6 +77,13 @@ export interface SpotifyPlaylist {
   uri: string;
 }
 
+export interface SpotifyHandleNextAndPrevious {
+  limit: number;
+  next: string;
+  offset: number;
+  previous: string;
+}
+
 export interface SpotifyUserPlayLists {
   href: string;
   items: Array<SpotifyPlaylist>;

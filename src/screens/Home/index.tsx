@@ -3,6 +3,7 @@ import React from "react";
 import {
   Dimensions,
   FlatList,
+  Platform,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -22,12 +23,11 @@ type FilterTypes = "1" | "2" | "3";
 
 const Home: React.FC = () => {
   const { userData, tokens } = useAuth();
-  const { playlists, getUserPlaylistsQuery } = useUser();
+  const { playlists, getUserPlaylistsQuery, currentMusicPlaying } = useUser();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [currentFilter, setCurrentFilter] = React.useState("");
   const [isSearching, setIsSearching] = React.useState(false);
-  const { addListener, removeListener } = useNavigation();
 
   React.useEffect(() => {
     getUserPlaylistsQuery.refetch();
@@ -38,14 +38,6 @@ const Home: React.FC = () => {
       setIsSearching(false);
     }
   }, [search]);
-
-  React.useEffect(() => {
-    const listener = addListener("blur", () => {
-      setIsModalOpen(false);
-    });
-
-    return () => removeListener("blur", () => {});
-  }, []);
 
   function handleSetFilter(val: string) {
     setCurrentFilter(val);
@@ -76,7 +68,10 @@ const Home: React.FC = () => {
     <TouchableWithoutFeedback onPress={() => setIsModalOpen(false)}>
       <S.Container>
         {isModalOpen && (
-          <S.ModalContainer tint="light" intensity={75}>
+          <S.ModalContainer
+            tint="dark"
+            intensity={Platform.OS === "ios" ? 75 : 100}
+          >
             <Button text="A-Z" onPress={() => handleSetFilter("1")} />
             <Button
               text="Total de músicas maior para menor"
@@ -130,7 +125,9 @@ const Home: React.FC = () => {
           }}
           contentContainerStyle={{
             paddingTop: moderateScale(10),
-            paddingBottom: moderateScale(20),
+            paddingBottom: currentMusicPlaying
+              ? moderateScale(100)
+              : moderateScale(20),
           }}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <PlaylistCard item={item} />}

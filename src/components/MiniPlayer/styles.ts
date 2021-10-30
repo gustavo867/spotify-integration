@@ -8,10 +8,8 @@ const { width } = Dimensions.get("screen");
 export const Container = styled(BlurView)`
   width: ${width * 0.9}px;
   padding: ${moderateScale(10)}px;
-  border-radius: ${moderateScale(8)}px;
-  border-color: rgb(10, 132, 255);
+  border-radius: ${moderateScale(12)}px;
   position: absolute;
-  border-width: 1px;
   align-self: center;
   flex-direction: row;
   align-items: center;

@@ -16,7 +16,13 @@ const UserInfo: React.FC<Props> = (props) => {
 
   return (
     <S.Container>
-      <S.UserAvatar source={{ uri: props?.uri ?? "" }} />
+      <S.UserAvatar
+        source={{
+          uri:
+            props?.uri ??
+            "https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999",
+        }}
+      />
       <S.UserDisplayName>
         <S.UserDisplayName
           style={{

@@ -1,11 +1,8 @@
 import { useNavigation } from "@react-navigation/core";
 import React from "react";
+import { Alert } from "react-native";
 import { useMutation, useQuery } from "react-query";
-import {
-  Item,
-  SpotifyPlaylist,
-  SpotifyUserPlayLists,
-} from "../../@types/spotify";
+import { Item, SpotifyPlaylist } from "../../@types/spotify";
 import { useAudio } from "../audio";
 import { useAuth } from "../auth";
 import { getSpecificPlaylist, getUserPlaylists } from "./queries";
@@ -22,16 +19,25 @@ function useUserValuesProvider() {
   const [currentPlaylist, setCurrentPlaylist] = React.useState<Item[]>([]);
   const {
     loadMusicPreview,
-    audio,
     currentMusicPlaying,
     setCurrentMusicPlaying,
+    handlePlayPause,
   } = useAudio();
   const { navigate } = useNavigation();
 
   const handlePlayPreview = async (music: Item) => {
-    loadMusicPreview(music.track.preview_url);
+    if (!music.track.preview_url) {
+      Alert.alert("Oops", "Essa música não tem preview");
+      return;
+    }
 
-    setCurrentMusicPlaying(music);
+    if (music?.track?.id === currentMusicPlaying?.track?.id) {
+      handlePlayPause();
+    } else {
+      loadMusicPreview(music.track.preview_url, music.track.id);
+
+      setCurrentMusicPlaying(music);
+    }
   };
 
   const getUserPlaylistsQuery = useQuery(
@@ -43,6 +49,7 @@ function useUserValuesProvider() {
       }),
     {
       keepPreviousData: true,
+      cacheTime: 1000 * 60 * 60 * 24,
       enabled: Boolean(
         context.userData?.id && context.tokens.accessToken !== ""
       ),
@@ -50,7 +57,8 @@ function useUserValuesProvider() {
         setPlaylists(data.items);
       },
       onError: (error: any) => {
-        console.log("deu erro", error.request);
+        // console.log("deu erro", error.request);
+        context.refreshToken();
       },
     }
   );

@@ -7,10 +7,12 @@ import { useUser } from "../../hooks/user/user";
 
 import * as S from "./styles";
 import { useAudio } from "../../hooks/audio";
+import { useNavigation } from "@react-navigation/core";
 
 const MiniPlayer: React.FC = () => {
   const { showMiniPlayer, handlePlayPause, audio, time } = useAudio();
   const { currentMusicPlaying, setCurrentMusicPlaying } = useUser();
+  const { navigate } = useNavigation();
   const safeArea = useSafeAreaInsets();
 
   return showMiniPlayer && currentMusicPlaying ? (
@@ -21,11 +23,28 @@ const MiniPlayer: React.FC = () => {
       tint="dark"
       intensity={90}
     >
-      <S.ImgCircle
-        source={{
-          uri: currentMusicPlaying.track?.album?.images[0].url ?? "",
-        }}
-      />
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() =>
+          navigate(
+            "FullImage" as never,
+            {
+              url:
+                currentMusicPlaying.track?.album?.images[0].url ??
+                "https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999",
+            } as never
+          )
+        }
+      >
+        <S.ImgCircle
+          source={{
+            uri:
+              currentMusicPlaying.track?.album?.images[0].url ??
+              "https://community.spotify.com/t5/image/serverpage/image-id/55829iC2AD64ADB887E2A5/image-size/large?v=v2&px=999",
+          }}
+        />
+      </TouchableOpacity>
+
       <S.Column>
         <S.Title>{currentMusicPlaying.track.name}</S.Title>
         {audio.isPlaying && (

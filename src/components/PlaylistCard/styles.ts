@@ -7,8 +7,6 @@ const { width, height } = Dimensions.get("screen");
 export const Container = styled.TouchableOpacity`
   width: ${width * 0.95}px;
   align-self: center;
-  border-color: rgba(255, 255, 255, 0.4);
-  border-width: ${moderateScale(1)}px;
   flex-direction: column;
   margin-top: ${moderateScale(12)}px;
   border-radius: ${moderateScale(12)}px;

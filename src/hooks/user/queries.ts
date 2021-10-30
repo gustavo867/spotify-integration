@@ -29,7 +29,7 @@ export async function getUserPlaylists(props: getUserPlaylistsRequest) {
 
 export async function getSpecificPlaylist(props: GetSpecificPlaylistRequest) {
   const response = await axios.get<SpotifySpecificPlaylist>(
-    `https://api.spotify.com/v1/playlists/${props.playlist_id}`,
+    `https://api.spotify.com/v1/playlists/${props.playlist_id}?limit=300`,
     {
       headers: {
         Authorization: `Bearer ${props.token}`,
