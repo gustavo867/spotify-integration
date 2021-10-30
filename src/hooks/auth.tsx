@@ -157,7 +157,13 @@ function useAuthProviderValues() {
 
       Alert.alert("Erro ao fazer login com spotify");
     } catch (error: any) {
-      // console.log("error", error.request);
+      console.log("error", error.request);
+
+      if (error?.request?.status === 403) {
+        Alert.alert("Usuário não registrado na dashboard de desenvolvedor");
+
+        return;
+      }
 
       Alert.alert("Erro ao fazer login com spotify");
 

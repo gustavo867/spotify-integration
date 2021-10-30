@@ -4,9 +4,9 @@ import {
   Dimensions,
   StyleProp,
   TouchableOpacityProps,
-  View,
   ViewStyle,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { moderateScale } from "react-native-size-matters";
 
 import * as S from "./styles";

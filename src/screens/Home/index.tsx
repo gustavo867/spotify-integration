@@ -1,9 +1,9 @@
-import { useNavigation } from "@react-navigation/core";
 import React from "react";
 import {
   Dimensions,
   FlatList,
   Platform,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -14,6 +14,7 @@ import { SearchInput } from "../../components/SearchInput";
 import { UserInfo } from "../../components/UserInfo";
 import { useAuth } from "../../hooks/auth";
 import { useUser } from "../../hooks/user/user";
+import { Ionicons } from "@expo/vector-icons";
 
 import * as S from "./styles";
 
@@ -99,21 +100,15 @@ const Home: React.FC = () => {
         )}
         <S.FiltersContainer>
           <SearchInput
-            inputWidth={width * 0.65}
+            inputWidth={width * 0.8}
             value={search}
             onChangeText={setSearch}
             onFocus={() => setIsSearching(true)}
             onBlur={() => setIsSearching(false)}
           />
-          <Button
-            text="Filtros"
-            style={{
-              marginTop: 0,
-            }}
-            onPress={() => setIsModalOpen(true)}
-            buttonHeight={moderateScale(42)}
-            buttonWidth={width * 0.28}
-          />
+          <TouchableOpacity onPress={() => setIsModalOpen(true)}>
+            <Ionicons name="filter" size={24} color="#fff" />
+          </TouchableOpacity>
         </S.FiltersContainer>
 
         <FlatList

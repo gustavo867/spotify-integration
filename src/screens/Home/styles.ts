@@ -17,7 +17,7 @@ export const Container = styled(SafeAreaView)`
 export const FiltersContainer = styled.View`
   width: ${width}px;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
   flex-direction: row;
 `;
 
