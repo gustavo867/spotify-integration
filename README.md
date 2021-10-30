@@ -6,7 +6,7 @@
 
 <img src="./github/screenshot_1.png"></img>
 
-### Configure a url de redirecionamento para https://auth.expo.io/@seu-usuario/test-mobile-seven-app
+### Configure a url de redirecionamento para https://auth.expo.io/@seu-usuario/spotify-integration
 
 <img src="./github/screenshot_2.png"></img>
 
