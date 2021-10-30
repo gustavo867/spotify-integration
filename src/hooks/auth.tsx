@@ -1,6 +1,6 @@
 import React, { createContext } from "react";
 import { encode } from "base-64";
-import { CLIENT_ID, CLIENT_SECRET } from "../../config";
+import { CLIENT_ID, CLIENT_SECRET, USER } from "../../config";
 
 import * as AuthSessions from "expo-auth-session";
 import axios from "axios";
@@ -29,7 +29,7 @@ export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
 
-const redirect_uri = "https://auth.expo.io/@gustavo867/spotify-integration";
+const redirect_uri = `https://auth.expo.io/@${USER}/spotify-integration`;
 
 function useAuthProviderValues() {
   const [loading, setLoading] = React.useState(false);

@@ -10,9 +10,18 @@
 
 <img src="./github/screenshot_3.png"></img>
 
-### Após isso, crie um arquivo config.ts na raiz do projeto, e insira as duas variavéis: CLIENT_ID e CLIENT_SECRET, que aparecem na dashboard do spotify
+### Após isso, crie um arquivo config.ts na raiz do projeto, e insira tres variavéis: CLIENT_ID e CLIENT_SECRET, que aparecem na dashboard do spotify e USER que é o seu usuário do expo
 
 ==========
+
+## 🔧 Comandos para fazer login no expo
+
+```bash
+# Execute o comando
+  $ expo login
+# Executar o comando para pegar o nome do seu usuário
+  $ expo whoami
+```
 
 # Rodando o projeto
 
