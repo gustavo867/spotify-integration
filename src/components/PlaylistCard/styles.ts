@@ -5,8 +5,7 @@ import styled from "styled-components/native";
 const { width, height } = Dimensions.get("screen");
 
 export const Container = styled.TouchableOpacity`
-  width: ${width * 0.8}px;
-  min-height: ${moderateScale(120)}px;
+  width: ${width * 0.95}px;
   align-self: center;
   border-color: rgba(255, 255, 255, 0.4);
   border-width: ${moderateScale(1)}px;
@@ -35,6 +34,7 @@ export const PlaylistName = styled.Text.attrs({
   numberOfLines: 1,
 })`
   font-size: ${moderateScale(18)}px;
+  font-weight: 400;
   max-width: ${width * 0.5}px;
   color: #fff;
 `;
@@ -44,5 +44,6 @@ export const PlaylistDesc = styled.Text.attrs({
 })`
   font-size: ${moderateScale(15)}px;
   max-width: ${width * 0.75}px;
-  color: #fff;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
 `;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  Dimensions,
   TextInput,
   TextInputProps,
   TouchableOpacity,
@@ -10,9 +11,16 @@ import {
 import * as S from "./styles";
 import { moderateScale } from "react-native-size-matters";
 
-interface Props extends TextInputProps {}
+const { width } = Dimensions.get("screen");
 
-const SearchInput: React.FC<Props> = ({ ...rest }) => {
+interface Props extends TextInputProps {
+  inputWidth?: number;
+}
+
+const SearchInput: React.FC<Props> = ({
+  inputWidth = width * 0.9,
+  ...rest
+}) => {
   const inputRef = React.useRef<TextInput>(null);
 
   function clearInput() {
@@ -25,13 +33,20 @@ const SearchInput: React.FC<Props> = ({ ...rest }) => {
   }
 
   return (
-    <S.Container>
+    <S.Container
+      style={{
+        width: inputWidth,
+      }}
+    >
       <Ionicons name="search" size={moderateScale(18)} color="#bfbfc1" />
       <S.Input
         ref={inputRef}
         placeholder="Pesquise aqui"
         placeholderTextColor="#fff"
         {...rest}
+        style={{
+          width: inputWidth * 0.8,
+        }}
       />
       <TouchableOpacity
         hitSlop={{

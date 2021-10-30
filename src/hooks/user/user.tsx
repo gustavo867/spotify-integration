@@ -6,6 +6,7 @@ import {
   SpotifyPlaylist,
   SpotifyUserPlayLists,
 } from "../../@types/spotify";
+import { useAudio } from "../audio";
 import { useAuth } from "../auth";
 import { getSpecificPlaylist, getUserPlaylists } from "./queries";
 
@@ -19,7 +20,19 @@ function useUserValuesProvider() {
   const context = useAuth();
   const [playlists, setPlaylists] = React.useState<SpotifyPlaylist[]>([]);
   const [currentPlaylist, setCurrentPlaylist] = React.useState<Item[]>([]);
+  const {
+    loadMusicPreview,
+    audio,
+    currentMusicPlaying,
+    setCurrentMusicPlaying,
+  } = useAudio();
   const { navigate } = useNavigation();
+
+  const handlePlayPreview = async (music: Item) => {
+    loadMusicPreview(music.track.preview_url);
+
+    setCurrentMusicPlaying(music);
+  };
 
   const getUserPlaylistsQuery = useQuery(
     "getUserPlaylistsQuery",
@@ -30,15 +43,14 @@ function useUserValuesProvider() {
       }),
     {
       keepPreviousData: true,
-      cacheTime: 24 * 80,
       enabled: Boolean(
         context.userData?.id && context.tokens.accessToken !== ""
       ),
       onSuccess: (data) => {
         setPlaylists(data.items);
       },
-      onError: (error) => {
-        // console.log("deu erro", error.request);
+      onError: (error: any) => {
+        console.log("deu erro", error.request);
       },
     }
   );
@@ -65,12 +77,17 @@ function useUserValuesProvider() {
       playlists,
       getSpecificPlaylistMutation,
       currentPlaylist,
+      currentMusicPlaying,
+      setCurrentMusicPlaying,
+      handlePlayPreview,
     }),
     [
       getUserPlaylistsQuery,
       playlists,
       getSpecificPlaylistMutation,
       currentPlaylist,
+      currentMusicPlaying,
+      handlePlayPreview,
     ]
   );
 }

@@ -18,31 +18,82 @@ type AuthResponse = {
   url: string;
 };
 
+type TokenResponse = {
+  access_token: string;
+  expires_in: number;
+};
+
 type AuthContextProps = ReturnType<typeof useAuthProviderValues>;
 
 export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
 
+const redirect_uri = "https://auth.expo.io/@gustavo867/test-mobile-seven-app";
+
 function useAuthProviderValues() {
   const [loading, setLoading] = React.useState(false);
   const [tokens, setTokens] = React.useState({
     refreshToken: "",
     accessToken: "",
-    expiresIn: "",
+    expiresIn: 0,
   });
   const [userData, setUserData] = React.useState<SpotifyDTOS | undefined>(
     undefined
   );
+
+  async function refreshToken() {
+    const credsB64 = encode(`${CLIENT_ID}:${CLIENT_SECRET}`);
+
+    const response = await axios.post<TokenResponse>(
+      "https://accounts.spotify.com/api/token",
+      `grant_type=refresh_token&refresh_token=${tokens.refreshToken}&redirect_uri=${redirect_uri}`,
+      {
+        headers: {
+          Authorization: `Basic ${credsB64}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    setTokens((s) => ({
+      ...s,
+      accessToken: response.data.access_token,
+      expiresIn: response.data.expires_in,
+    }));
+  }
+
+  async function getUserFromStorage() {
+    const user = await AsyncStorage.getItem("@user");
+    const token = await AsyncStorage.getItem("@tokens");
+    const userParsed = JSON.parse(user as string);
+    const tokenParsed = JSON.parse(token as string);
+
+    if (userParsed) {
+      setUserData(userParsed);
+
+      if (tokenParsed?.expiresIn === 0) {
+        await refreshToken();
+      }
+
+      setTokens((s) => ({
+        ...s,
+        accessToken: tokenParsed?.accessToken ?? s.accessToken,
+        refreshToken: tokenParsed?.refreshToken ?? s.accessToken,
+        expiresIn: tokenParsed?.expiresIn ?? s.accessToken,
+      }));
+    }
+  }
+
+  React.useEffect(() => {
+    getUserFromStorage();
+  }, []);
 
   async function handleLoginWithSpotify() {
     setLoading(true);
 
     try {
       const scope = "user-read-private playlist-modify-public";
-      const redirect_uri =
-        "https://auth.expo.io/@gustavo867/test-mobile-seven-app";
-
       const authUrl = `https://accounts.spotify.com/authorize?response_type=code&scope=${encodeURI(
         scope
       )}&client_id=${CLIENT_ID}&redirect_uri=${redirect_uri}`;
@@ -94,6 +145,7 @@ function useAuthProviderValues() {
             accessToken,
             refreshToken,
             expiresIn,
+            code: authResponse.params.code,
           })
         );
 
@@ -117,32 +169,11 @@ function useAuthProviderValues() {
     setTokens({
       refreshToken: "",
       accessToken: "",
-      expiresIn: "",
+      expiresIn: 0,
     });
     await AsyncStorage.removeItem("@user");
     await AsyncStorage.removeItem("@tokens");
   }
-
-  React.useEffect(() => {
-    async function getUserFromStorage() {
-      const user = await AsyncStorage.getItem("@user");
-      const token = await AsyncStorage.getItem("@tokens");
-      const userParsed = JSON.parse(user as string);
-      const tokenParsed = JSON.parse(token as string);
-
-      if (userParsed) {
-        setUserData(userParsed);
-        setTokens((s) => ({
-          ...s,
-          accessToken: tokenParsed?.access_token ?? s.accessToken,
-          refreshToken: tokenParsed?.refreshToken ?? s.accessToken,
-          expiresIn: tokenParsed?.expiresIn ?? s.accessToken,
-        }));
-      }
-    }
-
-    getUserFromStorage();
-  }, []);
 
   return React.useMemo(
     () => ({

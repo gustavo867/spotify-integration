@@ -29,13 +29,8 @@ const PlaylistCard: React.FC<Props> = (props) => {
           ? props.item.description
           : "Playlist sem descrição"}
       </S.PlaylistDesc>
-      <S.PlaylistDesc
-        style={{
-          marginTop: moderateScale(15),
-        }}
-      >
-        Total de músicas:
-        {props.item.tracks.total}
+      <S.PlaylistDesc>
+        Total de músicas: {props.item.tracks.total}
       </S.PlaylistDesc>
     </S.Container>
   );

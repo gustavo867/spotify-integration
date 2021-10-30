@@ -1,13 +1,11 @@
 import React from "react";
-import { FlatList, Text } from "react-native";
+import { FlatList } from "react-native";
+import { moderateScale } from "react-native-size-matters";
 import { Header } from "../../components/Header";
+import MusicCard from "../../components/MusicCard";
 import { useUser } from "../../hooks/user/user";
 
 import * as S from "./styles";
-
-interface RouteProps {
-  playlist_id: string;
-}
 
 const Details: React.FC = () => {
   const context = useUser();
@@ -17,16 +15,12 @@ const Details: React.FC = () => {
       <Header />
       <FlatList
         data={context.currentPlaylist}
+        contentContainerStyle={{
+          paddingBottom: moderateScale(20),
+        }}
+        showsVerticalScrollIndicator={true}
         keyExtractor={(item) => String(item.track.id)}
-        renderItem={({ item }) => (
-          <Text
-            style={{
-              color: "#fff",
-            }}
-          >
-            {item.track.name}
-          </Text>
-        )}
+        renderItem={({ item }) => <MusicCard item={item} />}
       />
     </S.Container>
   );
