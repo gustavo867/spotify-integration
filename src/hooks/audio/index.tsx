@@ -50,6 +50,7 @@ function useAudioValuesProvider() {
       allowsRecordingIOS: false,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
     });
@@ -101,23 +102,53 @@ function useAudioValuesProvider() {
 
   const loadMusicPreview = React.useCallback(
     async (uri: string, id: string) => {
-      await soundObject.loadAsync({
-        uri: uri,
-      });
+      if (audio.isPlaying) {
+        soundObject.unloadAsync().then(async () => {
+          setTime({
+            position: 0,
+            timeLeft: 0,
+            durationTime: "",
+            positionTime: "",
+            remainTime: "",
+          });
 
-      timeTimeout = setInterval(() => getStatus(), 1000);
+          await soundObject.loadAsync({
+            uri: uri,
+          });
 
-      setAudio({
-        isPlaying: true,
-        playbackInstance: "something" as unknown as null,
-        volume: audio.volume,
-        isBuffering: audio.isBuffering,
-        currentPlaying: id,
-      });
+          timeTimeout = setInterval(() => getStatus(), 1000);
 
-      await soundObject.playAsync();
+          setAudio({
+            isPlaying: true,
+            playbackInstance: "something" as unknown as null,
+            volume: audio.volume,
+            isBuffering: audio.isBuffering,
+            currentPlaying: id,
+          });
 
-      setShowMiniPlayer(true);
+          await soundObject.playAsync();
+
+          setShowMiniPlayer(true);
+        });
+      } else {
+        await soundObject.loadAsync({
+          uri: uri,
+        });
+
+        timeTimeout = setInterval(() => getStatus(), 1000);
+
+        setAudio({
+          isPlaying: true,
+          playbackInstance: "something" as unknown as null,
+          volume: audio.volume,
+          isBuffering: audio.isBuffering,
+          currentPlaying: id,
+        });
+
+        await soundObject.playAsync();
+
+        setShowMiniPlayer(true);
+      }
     },
     [audio]
   );

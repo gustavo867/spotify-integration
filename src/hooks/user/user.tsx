@@ -31,13 +31,9 @@ function useUserValuesProvider() {
       return;
     }
 
-    if (music?.track?.id === currentMusicPlaying?.track?.id) {
-      handlePlayPause();
-    } else {
-      loadMusicPreview(music.track.preview_url, music.track.id);
+    loadMusicPreview(music.track.preview_url, music.track.id);
 
-      setCurrentMusicPlaying(music);
-    }
+    setCurrentMusicPlaying(music);
   };
 
   const getUserPlaylistsQuery = useQuery(

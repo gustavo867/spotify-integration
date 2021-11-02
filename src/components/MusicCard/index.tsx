@@ -35,7 +35,7 @@ const MusicCard: React.FC<Props> = (props) => {
   );
 
   return (
-    <S.Container>
+    <S.Container onPress={() => context.handlePlayPreview(props.item)}>
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() =>
@@ -66,17 +66,13 @@ const MusicCard: React.FC<Props> = (props) => {
         </S.Title>
         <S.Artists>{artists}</S.Artists>
       </S.RightContainer>
-      {audio.isPlaying === false && props.item?.track?.preview_url ? (
+      {props.item?.track?.preview_url ? (
         <S.PlayButton onPress={() => context.handlePlayPreview(props.item)}>
           <Ionicons
             name={isPlaying ? "pause" : "play"}
             size={moderateScale(24)}
             color="#fff"
           />
-        </S.PlayButton>
-      ) : isPlaying ? (
-        <S.PlayButton onPress={() => context.handlePlayPreview(props.item)}>
-          <Ionicons name="pause" size={moderateScale(24)} color="#fff" />
         </S.PlayButton>
       ) : (
         <S.PlayButton>
