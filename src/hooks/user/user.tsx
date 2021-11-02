@@ -21,6 +21,7 @@ function useUserValuesProvider() {
     loadMusicPreview,
     currentMusicPlaying,
     setCurrentMusicPlaying,
+    audio,
     handlePlayPause,
   } = useAudio();
   const { navigate } = useNavigation();
@@ -31,9 +32,16 @@ function useUserValuesProvider() {
       return;
     }
 
-    loadMusicPreview(music.track.preview_url, music.track.id);
+    if (
+      currentMusicPlaying?.track?.id === music?.track?.id &&
+      audio.isPlaying
+    ) {
+      handlePlayPause();
+    } else {
+      loadMusicPreview(music.track.preview_url, music.track.id);
 
-    setCurrentMusicPlaying(music);
+      setCurrentMusicPlaying(music);
+    }
   };
 
   const getUserPlaylistsQuery = useQuery(
