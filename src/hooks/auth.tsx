@@ -206,7 +206,9 @@ function useAuthProviderValues() {
   );
 }
 
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const values = useAuthProviderValues();
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
